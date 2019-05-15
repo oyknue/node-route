@@ -1,0 +1,24 @@
+doctype html
+html(lang= "ko")
+  head
+    title 샘플1
+    meta(charset="utf-8")
+    link(href="/css/bootstrap.min.css", rel="stylesheet")
+    link(href="/css/app2.css", rel="stylesheet")
+  body
+    - console.log(books, id)
+    div.container
+      h1.jumbotron pug를 이용한 웹페이지 입니다.
+      h3(class="radius mt bor-a pa")= bookTitle
+      h5 &lt;html&gt;은 최상위태그입니다.
+      p
+        -var site1 = "https://www.naver.com"
+        -var site2 = "https://www.daum.net"
+        a(href=site1, target="_blank") 네이버로 갑니다.
+        br
+        a(href=site2, target="_blank") 다음으로 갑니다.
+      ul.radius.mt.bor-a.pa.flex.flex-tc
+        each book in books
+          li.flex-g.flex-s.p5.tc= book
+      p
+        <h1>${books[id]}입니다</h1>
