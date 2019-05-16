@@ -10,19 +10,27 @@ app.listen(80, () => {
 app.locals.pretty = true;
 app.use(express.static("www"));//express안에 있는 static메소드로 www루트로 잡게함
 
-app.set('view engine', 'pug');
-app.set('views', './views')
+app.set('view engine', 'pug'); //뷰엔진을 퍼그로 세팅해주세요
+app.set('views', './views') //view폴더를./views로 지정해주세요
 
 app.get("/book/:id", (req, res) => {
   var books = [
-    "카프카","헤밍웨이","조지오웰","하루키","헤르만헤세"
+    {name:"변신", content:"눈을 떠보니.."},
+    {name:"이방인", content:"아니, 어쩌면 어제"},
+    {name:"멋진 신세계", content:"아. 이 멋진 인간들이여!"},
+    {name:"1984", content:"전쟁은 평화,자유는 예속,무지는 힘"},
+    {name:"노인과바다", content:"팔십사일 동안 그는 바다에 나가서.."}
   ];
   var id = req.params.id;
   var vals = {
+    docTitle: '도서 검색 시스템입니다.',
+    cssName: "book",
+    jsName: "book",
+    logoFile: "/img/logo.png",
     books,
-    id,
+    id
   };
-  res.render('sample', vals);
+  res.render('book', vals);
 });
 
 
@@ -43,3 +51,4 @@ app.get("/book", (req, res) => {
   `);
 });
 */
+

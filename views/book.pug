@@ -1,0 +1,12 @@
+doctype html
+html
+	head
+		include inc/header.pug
+	body
+		div.container
+			include inc/nav.pug
+			//본문 시작
+			div.conts= books[id].content
+			//본문 종료
+			include inc/footer.pug
+		script(src=`/js/${jsName}.js`)
