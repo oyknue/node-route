@@ -1,8 +1,12 @@
 //서버구축
 const express = require('express');
 const app = express();
+const db = require('./mysql_conn'); //경로설정 중요 그냥 mysql_conn이렇게 쓰면 에러뜸..
+const mysql = db.mysql;
+const conn = db.conn; //db를 통하여 내가 만든 접속정보가 들어간다. (mysql_conn.js export)
+conn.connect(); //conn이라는 접속정보를 connect해주세요.
 app.listen(80, () => {
-  console.log('connected at 3000 port! http://127.0.0.1:80');
+  console.log('connected at 3000 port! http://127.0.0.1:3000');
 });
 
 //라우팅

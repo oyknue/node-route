@@ -44,6 +44,9 @@ button {border: none;}
 /***** 폰트설정 *****/
 .font-pf {font-family: "Playfair Display";}
 .font-pt {font-family: 'PT Sans', sans-serif;}
+.red{color: red;}
+.blue{color: blue;}
+.gray{color: gray;}
 
 /***** border *****/
 .bor-a {border: 1px solid #ccc;}
@@ -129,3 +132,8 @@ button {border: none;}
 .pb3 {padding-bottom: 3rem;}
 .pa3 {padding: 3rem;}
 
+/* input width */
+.in50{width: 50px !important;}
+.in100{width: 100px !important;}
+.in150{width: 150px !important;}
+.in200{width: 200px !important;}
