@@ -1,32 +1,29 @@
-//익스프레스 모듈 참조
-const express = require("express"); 
-//함수 실행 (Express 실행)
-const app = express();
-//console.log() 참조
-const log = console.log;
-const port = 3000;
+const express = require('express');	// express module 참조
+const app = express();	// express 실행
+const log = console.log;	// console.log 참조
 
-//서버구동
-app.listen(port, function(){
-  log('Connected 3000 port: http://127.0.0.1:3000 node app');
+// 서버 구동
+app.listen(3000, () => {
+	log('Connected 3000 port http://127.0.0.1:3000');
+}); 
+
+// 셋팅
+app.locals.pretty = true;	//클라이언트가 response로 전달받는 결과태그를 정리해 준다.
+
+// Router 구현
+app.use("/", express.static('public'));	//Static 요청 처리
+app.get('/get_test', (req, res) => {
+	res.send("<h1>Hello World</h1>");
 });
 
-//셋팅
-app.locals.pretty = true;  //클라이언트가 response로 전달받은 결과태그를 정리해준다 
-//remote는 클라이언트 local은 서버
+app.get("/score_save", (req, res) => {
+	var userName = req.query.uname;
+	var kor = req.query.kor;
+	res.send(`클라이언트가 전달 해 준 변수는 ${userName} / ${kor} 입니다.`);
+});
 
-//router 구현
-app.use(express.static('public')); //static 요청 처리
-app.get('/get_test', (req, res)=>{
-  res.send("<h1>hello world~!</h1>") //이 자바스크립트는 벌써 실행되서 서버에서 돌고 있으니까 여기서 아무리 수정해도 반영안돼. 껏다가 노드를 다시 실행해줘야함(node app/supervisor app)
-});
-app.get("/score_save", (req, res) =>{
-  var userName = req.query.uname;
-  var kor = req.query.kor;
-  res.send(`클라이언트가 전달해준 변수는 ${userName} / ${kor} 입니다`);
-});
-app.post("/score_save", (req, res)=>{
-  res.send(`post 요청`);
+app.post("/score_save", (req, res) => {
+	res.send("POST 요청");
 });
 
 app.get('/page', (req, res) => {

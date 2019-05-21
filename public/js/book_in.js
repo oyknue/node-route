@@ -1,4 +1,11 @@
-$("#sdate").datepicker();
+$("#sdate").datepicker({
+	showOn: 'focus',
+	buttonText: "달력",
+	changeMonth: true,
+	changeYear: true,
+	yearRange: 'c-200:c+0',
+	showButtonPanel: true
+});
 $("#bt_save").click(function(){
 	var $f = $(document.book_in);
 	var title = $("input[name='title']", $f);
@@ -11,7 +18,7 @@ $("#bt_save").click(function(){
 	var sdate = $("input[name='sdate']", $f);
 	var cnt = $("input[name='cnt']", $f);
 	var summary = $("textarea[name='summary']", $f);
-        
+
 	if(title.val() == "") {
 		alert("책 제목을 입력하세요.");
 		title.focus();
