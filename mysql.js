@@ -1,10 +1,22 @@
 // 서버구축
 const express = require('express');
 const app = express();
+const path = require("path");
 const bodyParser = require('body-parser');
-const db = require('./mysql_conn');
+const db = require("./module/mysql_conn");
+const pager = require("./module/pager");
+const util = require("./module/util");
 const mysql = db.mysql;
 const conn = db.conn;
+
+const pageCnt = pager.pageCnt;
+const pageDiv = pager.pageDiv;
+
+/*
+const fns = require("./module/test");
+fns.fn("테스트");
+fns.fn2("테스트");
+*/
 
 // 서버실행
 app.listen(3000, () => {
@@ -14,28 +26,45 @@ app.listen(3000, () => {
 // 초기설정
 app.locals.pretty = true;
 app.set("view engine", "pug");
-app.set("views", "./views");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 conn.connect();
-
 // ROUTER
-app.get("/book", (req, res) => {
-	var sql = " SELECT * FROM book ORDER BY id DESC ";
+app.get(["/book", "/book/:page"], (req, res) => {
+	var rows = 0;				// 총 데이터 갯수
+	var pageTotal = 0;	// 총 페이지 수
+	var page = req.params.page;
+	if(page === undefined) page = 1;
+	var pageStart = (page - 1) * pageCnt;		// sql LIMIT 의 첫번째 인자(시작 레코드 번호)
+	var sql = " SELECT count(id) AS cnt FROM book ";
 	conn.query(sql, (err, result, field) => {
 		if(err) {
 			console.log(err);
 			res.send("에러");
 		}
 		else {
-			var vals = {
-				cssName: "book",
-				jsName: "book",
-				smTit: "도서 목록 리스트",
-				items: result
-			}
-			console.log(result);
-			res.render('book_list', vals);
+			rows = result[0].cnt;
+			pageTotal = Math.ceil(rows/pageCnt);
+			var sql = ` SELECT * FROM book ORDER BY id DESC LIMIT ${pageStart}, ${pageCnt} `;
+			conn.query(sql, (err, result, field) => {
+				if(err) {
+					console.log(err);
+					res.send("에러");
+				}
+				else {
+					var pages = pager.pagerCreate(page, pageTotal); 
+					var vals = {
+						cssName: "book",
+						jsName: "book",
+						smTit: "도서 목록 리스트",
+						items: result,
+						pages
+					}
+					//console.log(result);
+					res.render('book_list', vals);
+				}
+			});
 		}
 	});
 });
@@ -72,7 +101,7 @@ app.post("/admin/:method", (req, res) => {
 		var isbn = req.body.isbn_0 + '-' + req.body.isbn_1 + '-' + req.body.isbn_2;
 		var sdate = req.body.sdate;
 		var cnt = req.body.cnt;
-		var wdate = localDate();
+		var wdate = util.localDate();
 		var summary = req.body.summary;
 		/*
 		var sql = `
@@ -96,23 +125,4 @@ app.post("/admin/:method", (req, res) => {
 		});
 	}
 });
-
-function zp(n) {
-	if(n < 10) return "0" + n;
-	else return n;
-}
-function localDate(val) {
-	var d = null;
-	var dt = '';
-	if(val === undefined) d = new Date();
-	else if(typeof val == "number") d = new Date(val);
-	else return 0;
-	dt += d.getFullYear() + '-';
-	dt += zp(d.getMonth() + 1) + '-';
-	dt += zp(d.getDate()) + ' ';
-	dt += zp(d.getHours()) + ':';
-	dt += zp(d.getMinutes()) + ':';
-	dt += zp(d.getSeconds());
-	return dt;
-}
 //conn.end();
