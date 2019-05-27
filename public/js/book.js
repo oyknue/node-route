@@ -20,13 +20,18 @@ $(".dals").click(function(e){
 
 $(".click-tit").click(modalOpen);
 function modalOpen() {
-	var id = $(this).prev().text();
+	var id = $(this).prev().prev().text();
 	$.ajax({
 		type: "get",
 		url: "/detail/"+id,
 		dataType: "json",
 		success: function (res) {
 			console.log(res);
+			var src = "/img/noimage.gif";
+			if(res.img != '' && res.img != null) {
+				src = "/uploads/"+res.img.substr(0, 4)+"/" + res.img;
+			}
+			$(".dal-img").attr("src", src);
 			$(".dal-tit").html(res.title);
 			$(".dal-author").html(res.author);
 			$(".dal-isbn").html(res.isbn);

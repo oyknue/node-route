@@ -6,10 +6,17 @@ const bodyParser = require('body-parser');
 const db = require("./module/mysql_pool");
 const pager = require("./module/pager");
 const util = require("./module/util");
+const mt = require('./module/multer_fn');
 const mysql = db.mysql;
 const conn = db.conn;
 
+// multer 초기설정
+const upload = mt.multer({
+	storage: mt.storage, 
+	fileFilter: mt.chkImgExt
+});
 
+// pager 초기설정
 const pageCnt = pager.pageCnt;
 const pageDiv = pager.pageDiv;
 
@@ -54,6 +61,10 @@ app.get(["/book", "/book/:page"], (req, res) => {
 						else {
 							var pages = pager.pagerCreate(page, pageTotal);
 							//for(let i in result) result[i].price = util.vComma(result[i].price)+"원";
+							for(var i in result) {
+								if(result[i].img != "" && result[i].img != null) result[i].img = '/uploads/'+result[i].img.substr(0, 4)+'/'+result[i].img;
+								else result[i].img = '/img/noimage.gif';
+							}
 							var vals = {
 								cssName: "book",
 								jsName: "book",
@@ -73,7 +84,7 @@ app.get(["/book", "/book/:page"], (req, res) => {
 });
 
 // 도서 등록 및 수정
-app.post("/admin/:method", (req, res) => {
+app.post("/admin/:method", upload.single("img"), (req, res) => {
 	var method = req.params.method;
 	var id = req.body.id;
 	var title = req.body.title;
@@ -84,14 +95,17 @@ app.post("/admin/:method", (req, res) => {
 	var cnt = req.body.cnt;
 	var wdate = util.localDate();
 	var summary = req.body.summary;
-	var values = [title, author, price, isbn, sdate, cnt, 0, wdate, '', summary];
+	if(req.file != undefined) {
+		var values = [title, author, price, isbn, sdate, cnt, 0, wdate, req.file.filename, req.file.originalname, summary];
+		var sqlVal = " title=?, author=?, price=?, isbn=?, sdate=?, cnt=?, sellcnt=?, wdate=?, img=?, imgname=?, summary=? "; 
+	}
+	else {
+		var values = [title, author, price, isbn, sdate, cnt, 0, wdate, summary];
+		var sqlVal = " title=?, author=?, price=?, isbn=?, sdate=?, cnt=?, sellcnt=?, wdate=?, summary=? "; 
+	}
 	var sql = '';
-	if(method == "in") {
-		sql = " INSERT INTO book SET title=?, author=?, price=?, isbn=?, sdate=?, cnt=?, sellcnt=?, wdate=?, img=?, summary=? ";
-	}
-	else if(method == "up") {
-		sql = " UPDATE book SET title=?, author=?, price=?, isbn=?, sdate=?, cnt=?, sellcnt=?, wdate=?, img=?, summary=? WHERE id="+id;
-	}
+	if(method == "in") sql = " INSERT INTO book SET " + sqlVal;
+	else if(method == "up") sql = " UPDATE book SET " + sqlVal + " WHERE id="+id;
 	conn.getConnection((err, connect) => {
 		connect.query(sql, values, (err, result) => {
 			if(err) {
@@ -148,6 +162,7 @@ app.get("/update/:id", (req, res) => {
 	conn.getConnection((err, connect) => {
 		var sql = ` SELECT * FROM book WHERE id='${id}' `;
 		connect.query(sql, (err, result) => {
+			if(result[0].img != "" && result[0].img != null) result[0].img = '/uploads/'+result[0].img.substr(0, 4)+'/'+result[0].img;
 			if(err) {
 				connect.release();
 				console.log(err);
