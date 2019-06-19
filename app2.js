@@ -38,21 +38,4 @@ app.get("/book/:id", (req, res) => {
 });
 
 
-/*
-app.get("/book", (req, res) => {
-  var book = [
-    "카프카","헤밍웨이","조지오웰","하루키","헤르만헤세"
-  ];
-  var loc = [
-    "1","2","3","4","5"
-  ];
-  var id = req.query.id;
-  var floor = req.query.floor;
-  res.send(`
-  <h1>도서관에 오신 것을 환영합니다.</h1>
-  <h3>당신이 요청하신 책은 ${book[id]}입니다.</h3>
-  <h3></h3>${book[id]}의 위치는 ${loc[floor]}층 입니다.</h3>
-  `);
-});
-*/
 

@@ -45,9 +45,11 @@ function modalOpen() {
 	});
 }
 
+
+
 $("#bt-remove").click(bookRev);
 function bookRev() {
-	if(confirm("진심 삭제?")) {
+	if(confirm("정말로 삭제하시겠습니까?")) {
 		var id = $(this).data("id");
 		location.href = "/remove/"+id;
 	}
