@@ -2,8 +2,8 @@
 # Created by https://www.gitignore.io/api/node
 # Edit at https://www.gitignore.io/?templates=node
 
-mysql_conn.js
-mysql_pool.js
+# mysql_conn.js
+# mysql_pool.js
 webfonts/
 uploads/
 ### Node ###
